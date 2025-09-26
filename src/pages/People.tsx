@@ -105,14 +105,14 @@ const People: React.FC = () => {
         <div className="flex justify-center space-x-4 mb-8">
           <button
             onClick={() => setShowCircles(!showCircles)}
-            className={`btn-glass px-6 py-3 ${
+            className={`btn-glass px-6 py-3 flex items-center ${
               showCircles ? "bg-purple-100" : ""
             }`}
           >
             <UsersIcon className="w-5 h-5 text-purple-600 mr-2" />
             <span className="font-medium text-purple-600">Circles</span>
           </button>
-          <button className="btn-minimal bg-purple-600 text-white hover:bg-purple-700">
+          <button className="btn-minimal bg-purple-600 text-white hover:bg-purple-700 flex items-center">
             <PlusIcon className="w-5 h-5 mr-2" />
             <span className="font-medium">Add Person</span>
           </button>
@@ -290,7 +290,8 @@ const People: React.FC = () => {
                 ? "Add your first person to start building meaningful relationships"
                 : `Add people to your ${filter} circle`}
             </p>
-            <button className="btn-minimal bg-purple-600 text-white hover:bg-purple-700">
+            <button className="btn-minimal bg-purple-600 text-white hover:bg-purple-700 flex items-center">
+              <PlusIcon className="w-5 h-5 mr-2" />
               Add Person
             </button>
           </div>
