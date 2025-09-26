@@ -49,12 +49,19 @@ const Search: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (query.trim()) {
-      handleSearch();
-    } else {
+    if (!query.trim()) {
       setResults([]);
       setShowSuggestions(true);
+      setIsLoading(false);
+      return;
     }
+
+    // Debounce search to avoid flickering
+    const debounceTimer = setTimeout(() => {
+      handleSearch();
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(debounceTimer);
   }, [query]);
 
   const detectIntent = (text: string) => {
@@ -123,7 +130,10 @@ const Search: React.FC = () => {
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
-    // AI automatically detects intent based on keywords - no manual selection needed
+    // Clear loading state when typing
+    if (isLoading && value !== query) {
+      setIsLoading(false);
+    }
   };
 
   const handleSearch = async () => {
@@ -390,6 +400,11 @@ const Search: React.FC = () => {
                 type="text"
                 value={query}
                 onChange={(e) => handleQueryChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && query.trim()) {
+                    handleSearch();
+                  }
+                }}
                 placeholder="Search, add, or ask for advice..."
                 className="flex-1 px-6 py-4 bg-gray-50 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-purple-300 transition-all"
               />
@@ -400,7 +415,11 @@ const Search: React.FC = () => {
                   </div>
                 ) : (
                   <button
-                    onClick={handleSearch}
+                    onClick={() => {
+                      if (query.trim()) {
+                        handleSearch();
+                      }
+                    }}
                     className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-md"
                   >
                     <MagnifyingGlassIcon className="w-6 h-6 text-white" />
