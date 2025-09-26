@@ -190,59 +190,29 @@ const PersonDetail: React.FC = () => {
                 </div>
               )}
 
-              {/* Health Score Ring */}
-              <div className="absolute -bottom-3 -right-3">
-                <div className="relative w-12 h-12">
-                  <svg className="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
-                      fill="none"
-                      stroke="#f3f4f6"
-                      strokeWidth="3"
-                    />
-                    <path
-                      d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
-                      fill="none"
-                      stroke="url(#healthGradient)"
-                      strokeWidth="3"
-                      strokeDasharray={`${person.healthScore}, 100`}
-                      className="transition-all duration-500"
-                      strokeLinecap="round"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="healthGradient"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="0%"
-                      >
-                        <stop
-                          offset="0%"
-                          stopColor={
-                            person.healthScore >= 80
-                              ? "#4ade80"
-                              : person.healthScore >= 60
-                              ? "#facc15"
-                              : "#f87171"
-                          }
-                        />
-                        <stop
-                          offset="100%"
-                          stopColor={
-                            person.healthScore >= 80
-                              ? "#10b981"
-                              : person.healthScore >= 60
-                              ? "#f97316"
-                              : "#ec4899"
-                          }
-                        />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-sm font-bold text-gray-700">
-                      {person.healthScore}
+              {/* Health Score Badge - Redesigned */}
+              <div className="absolute -top-2 -right-2 z-10">
+                <div
+                  className={`relative px-2 py-2 rounded-2xl text-sm font-bold text-white shadow-lg backdrop-blur-sm border-2 border-white/30 ${
+                    person.healthScore >= 80
+                      ? "bg-gradient-to-br from-green-400 to-emerald-500"
+                      : person.healthScore >= 60
+                      ? "bg-gradient-to-br from-yellow-400 to-orange-500"
+                      : "bg-gradient-to-br from-red-400 to-pink-500"
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    {/* <div
+                      className={`w-2 h-2 rounded-full animate-pulse ${
+                        person.healthScore >= 80
+                          ? "bg-green-200"
+                          : person.healthScore >= 60
+                          ? "bg-yellow-200"
+                          : "bg-red-200"
+                      }`}
+                    ></div> */}
+                    <span className="whitespace-nowrap">
+                      {person.healthScore}%
                     </span>
                   </div>
                 </div>
@@ -302,18 +272,22 @@ const PersonDetail: React.FC = () => {
               </div>
 
               {/* Quick Actions */}
-              <div className="flex space-x-3">
-                <button className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 rounded-full text-white transition-colors">
-                  <PhoneIcon className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Call</span>
+              <div className="flex flex-wrap gap-3">
+                <button className="flex items-center space-x-2 px-6 py-3 bg-green-500 hover:bg-green-600 rounded-2xl text-white transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl min-w-fit">
+                  <PhoneIcon className="w-5 h-5" />
+                  <span className="font-semibold whitespace-nowrap">Call</span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
-                  <EnvelopeIcon className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Message</span>
+                <button className="flex items-center space-x-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-2xl text-white transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl min-w-fit">
+                  <EnvelopeIcon className="w-5 h-5" />
+                  <span className="font-semibold whitespace-nowrap">
+                    Message
+                  </span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-full text-white transition-colors">
-                  <PlusIcon className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Add Note</span>
+                <button className="flex items-center space-x-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-2xl text-white transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl min-w-fit">
+                  <PlusIcon className="w-5 h-5" />
+                  <span className="font-semibold whitespace-nowrap">
+                    Add Note
+                  </span>
                 </button>
               </div>
             </div>
