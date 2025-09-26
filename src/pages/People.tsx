@@ -91,116 +91,95 @@ const People: React.FC = () => {
   ).length;
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-secondary)" }}>
-      {/* Header */}
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-32 gradient-rainbow opacity-10 rounded-b-[2rem]"></div>
-        <div className="relative px-6 pt-12 pb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gradient mb-1">
-                Your People
-              </h1>
-              <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
-                {stats.total} meaningful connections
-              </p>
+    <div className="min-h-screen gradient-minimal">
+      {/* Minimal Header */}
+      <div className="relative px-6 pt-16 pb-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-minimal mb-3">Your People</h1>
+          <p className="text-lg font-medium text-gray-600">
+            {stats.total} meaningful connections
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center space-x-4 mb-8">
+          <button
+            onClick={() => setShowCircles(!showCircles)}
+            className={`btn-glass px-6 py-3 ${
+              showCircles ? "bg-purple-100" : ""
+            }`}
+          >
+            <UsersIcon className="w-5 h-5 text-purple-600 mr-2" />
+            <span className="font-medium text-purple-600">Circles</span>
+          </button>
+          <button className="btn-minimal bg-purple-600 text-white hover:bg-purple-700">
+            <PlusIcon className="w-5 h-5 mr-2" />
+            <span className="font-medium">Add Person</span>
+          </button>
+        </div>
+
+        {/* Stats Grid - Minimal */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="card-glass p-6 text-center">
+            <div className="text-3xl font-bold text-gray-900 mb-2">
+              {stats.total}
             </div>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setShowCircles(!showCircles)}
-                className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 ${
-                  showCircles
-                    ? "gradient-blue shadow-lg"
-                    : "bg-white shadow-md hover:shadow-lg"
-                }`}
-              >
-                <UsersIcon
-                  className={`w-5 h-5 ${
-                    showCircles ? "text-white" : "text-gray-600"
-                  }`}
-                />
-              </button>
-              <button className="btn-modern gradient-lime text-white">
-                <PlusIcon className="w-5 h-5" />
-              </button>
+            <div className="text-sm font-medium text-gray-600">Total</div>
+          </div>
+          <div className="card-glass p-6 text-center">
+            <div className="text-3xl font-bold text-orange-600 mb-2">
+              {overdueCount}
+            </div>
+            <div className="text-sm font-medium text-gray-600">
+              Need Attention
             </div>
           </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="card-colorful gradient-lime p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {stats.total}
-              </div>
-              <div className="text-sm font-medium text-white/80">
-                Total People
-              </div>
+          <div className="card-glass p-6 text-center">
+            <div className="text-3xl font-bold text-purple-600 mb-2">
+              {upcomingMilestones}
             </div>
-            <div className="card-colorful gradient-orange p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {overdueCount}
-              </div>
-              <div className="text-sm font-medium text-white/80">
-                Need Attention
-              </div>
-            </div>
-            <div className="card-colorful gradient-purple p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {upcomingMilestones}
-              </div>
-              <div className="text-sm font-medium text-white/80">This Week</div>
-            </div>
+            <div className="text-sm font-medium text-gray-600">This Week</div>
           </div>
         </div>
       </div>
 
       {/* Filters & Controls */}
-      <div className="px-6 pb-4">
-        <div className="card-modern p-4 space-y-4">
+      <div className="px-6 pb-6">
+        <div className="card-floating p-6">
           {/* Filters */}
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 gradient-blue rounded-xl flex items-center justify-center">
-              <FunnelIcon className="w-4 h-4 text-white" />
-            </div>
-            <div className="flex flex-wrap gap-2 flex-1">
-              {(["all", "family", "close", "friends", "work"] as const).map(
-                (filterType) => (
-                  <button
-                    key={filterType}
-                    onClick={() => setFilter(filterType)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 ${
-                      filter === filterType
-                        ? "gradient-pink text-white shadow-md"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {getFilterIcon(filterType)}
-                    <span className="capitalize">{filterType}</span>
-                    {filterType !== "all" && (
-                      <span
-                        className={`px-2 py-1 text-xs rounded-lg ${
-                          filter === filterType
-                            ? "bg-white/20 text-white"
-                            : "bg-white text-gray-600"
-                        }`}
-                      >
-                        {people.filter((p) => p.relation === filterType).length}
-                      </span>
-                    )}
-                  </button>
-                )
-              )}
-            </div>
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            {(["all", "family", "close", "friends", "work"] as const).map(
+              (filterType) => (
+                <button
+                  key={filterType}
+                  onClick={() => setFilter(filterType)}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                    filter === filterType
+                      ? "bg-purple-600 text-white shadow-md"
+                      : "btn-glass hover:bg-purple-50"
+                  }`}
+                >
+                  {getFilterIcon(filterType)}
+                  <span className="capitalize">{filterType}</span>
+                  {filterType !== "all" && (
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        filter === filterType
+                          ? "bg-white/20 text-white"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {people.filter((p) => p.relation === filterType).length}
+                    </span>
+                  )}
+                </button>
+              )
+            )}
           </div>
 
           {/* Sort */}
-          <div className="flex items-center space-x-3">
-            <span
-              className="text-sm font-medium"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Sort by:
-            </span>
+          <div className="flex items-center justify-center space-x-3">
+            <span className="text-sm font-medium text-gray-600">Sort by:</span>
             <select
               value={sortBy}
               onChange={(e) =>
@@ -208,8 +187,7 @@ const People: React.FC = () => {
                   e.target.value as "name" | "lastContact" | "healthScore"
                 )
               }
-              className="text-sm border-0 bg-gray-100 rounded-xl px-4 py-2 focus:outline-none focus:bg-white focus:shadow-md transition-all"
-              style={{ color: "var(--text-primary)" }}
+              className="text-sm border-0 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:bg-white focus:shadow-md transition-all text-gray-700"
             >
               <option value="healthScore">Health Score</option>
               <option value="lastContact">Last Contact</option>
@@ -221,42 +199,59 @@ const People: React.FC = () => {
 
       {/* Circles View */}
       {showCircles && (
-        <div className="px-6 pb-4">
-          <div className="card-modern p-6">
-            <h3
-              className="text-xl font-bold mb-4"
-              style={{ color: "var(--text-primary)" }}
-            >
+        <div className="px-6 pb-6">
+          <div className="card-floating p-8">
+            <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">
               Your Circles
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               {mockCircles.map((circle, index) => {
-                const gradients = [
-                  "gradient-lime",
-                  "gradient-purple",
-                  "gradient-cyan",
-                  "gradient-orange",
+                const colors = [
+                  {
+                    bg: "bg-purple-50",
+                    text: "text-purple-600",
+                    progress: "bg-purple-500",
+                  },
+                  {
+                    bg: "bg-blue-50",
+                    text: "text-blue-600",
+                    progress: "bg-blue-500",
+                  },
+                  {
+                    bg: "bg-green-50",
+                    text: "text-green-600",
+                    progress: "bg-green-500",
+                  },
+                  {
+                    bg: "bg-orange-50",
+                    text: "text-orange-600",
+                    progress: "bg-orange-500",
+                  },
                 ];
-                const gradient = gradients[index % gradients.length];
+                const color = colors[index % colors.length];
                 return (
                   <div
                     key={circle.id}
-                    className={`card-colorful ${gradient} p-4`}
+                    className={`${color.bg} p-6 rounded-2xl border border-gray-100`}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-bold text-white">{circle.name}</h4>
-                      <span className="text-sm font-medium text-white/80 bg-white/20 px-2 py-1 rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className={`font-bold ${color.text}`}>
+                        {circle.name}
+                      </h4>
+                      <span
+                        className={`text-sm font-semibold ${color.text} bg-white px-3 py-1 rounded-full`}
+                      >
                         {circle.members.length}
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="flex-1 bg-white/20 rounded-full h-2">
+                      <div className="flex-1 bg-white rounded-full h-3">
                         <div
-                          className="bg-white h-2 rounded-full transition-all duration-500"
+                          className={`${color.progress} h-3 rounded-full transition-all duration-500`}
                           style={{ width: `${circle.healthScore}%` }}
                         />
                       </div>
-                      <span className="text-sm font-bold text-white">
+                      <span className={`text-sm font-bold ${color.text}`}>
                         {circle.healthScore}%
                       </span>
                     </div>
@@ -269,7 +264,7 @@ const People: React.FC = () => {
       )}
 
       {/* People List */}
-      <div className="px-6 space-y-4">
+      <div className="px-6 space-y-6 pb-24">
         {filteredPeople.length > 0 ? (
           <>
             {filteredPeople.map((person) => (
@@ -281,21 +276,21 @@ const People: React.FC = () => {
             ))}
           </>
         ) : (
-          <div className="card-colorful gradient-purple p-8 text-center">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-soft">
-              <UserGroupIcon className="w-8 h-8 text-white" />
+          <div className="card-floating p-12 text-center">
+            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-breathe">
+              <UserGroupIcon className="w-10 h-10 text-purple-600" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               {filter === "all"
                 ? "No people added yet"
                 : `No ${filter} contacts`}
             </h3>
-            <p className="text-white/80 mb-6">
+            <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">
               {filter === "all"
                 ? "Add your first person to start building meaningful relationships"
                 : `Add people to your ${filter} circle`}
             </p>
-            <button className="btn-modern bg-white text-purple-600 hover:bg-gray-50">
+            <button className="btn-minimal bg-purple-600 text-white hover:bg-purple-700">
               Add Person
             </button>
           </div>
@@ -303,15 +298,14 @@ const People: React.FC = () => {
 
         {/* Quick stats at bottom */}
         {filteredPeople.length > 0 && (
-          <div className="card-modern p-4 mb-20">
-            <div
-              className="flex justify-between text-sm font-medium"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              <span>
+          <div className="card-glass p-6 text-center">
+            <div className="flex justify-center space-x-8 text-sm">
+              <span className="font-medium text-gray-700">
                 Showing {filteredPeople.length} of {people.length} people
               </span>
-              <span>Avg health: {Math.round(stats.avgHealth)}%</span>
+              <span className="font-medium text-gray-700">
+                Avg health: {Math.round(stats.avgHealth)}%
+              </span>
             </div>
           </div>
         )}

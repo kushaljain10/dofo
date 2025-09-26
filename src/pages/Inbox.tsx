@@ -91,36 +91,29 @@ const Inbox: React.FC = () => {
   const dismissedItems = items.filter((item) => item.dismissed);
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-secondary)" }}>
-      {/* Header */}
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-32 gradient-rainbow opacity-10 rounded-b-[2rem]"></div>
-        <div className="relative px-6 pt-12 pb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gradient mb-1">Inbox</h1>
-              <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
-                AI-discovered moments and insights
-              </p>
+    <div className="min-h-screen gradient-minimal">
+      {/* Minimal Header */}
+      <div className="relative px-6 pt-16 pb-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-minimal mb-3">Inbox</h1>
+          <p className="text-lg font-medium text-gray-600 mb-6">
+            AI-discovered moments and insights
+          </p>
+
+          {/* Notification Badge */}
+          {activeItems.length > 0 && (
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-orange-100 rounded-full">
+              <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold text-orange-700">
+                {activeItems.length} new notifications
+              </span>
             </div>
-            <div className="w-12 h-12 gradient-orange rounded-2xl flex items-center justify-center animate-float">
-              <div className="relative">
-                <InboxIcon className="w-6 h-6 text-white" />
-                {activeItems.length > 0 && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-lime-400 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-gray-800">
-                      {activeItems.length}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Content */}
-      <div className="px-6 space-y-6">
+      <div className="px-6 space-y-6 pb-24">
         {/* Active Items */}
         {activeItems.length > 0 ? (
           <div className="space-y-4">
@@ -129,59 +122,105 @@ const Inbox: React.FC = () => {
                 ? getPersonById(item.personId)
                 : null;
 
-              const gradients = {
-                birthday_detected: "gradient-purple",
-                job_change: "gradient-lime",
-                photo_memory: "gradient-blue",
-                overdue_promise: "gradient-orange",
-                relationship_insight: "gradient-pink",
+              const getItemStyle = (type: string) => {
+                switch (type) {
+                  case "birthday_detected":
+                    return {
+                      bg: "bg-purple-50",
+                      border: "border-purple-200",
+                      icon: "text-purple-600",
+                      dot: "bg-purple-400",
+                    };
+                  case "job_change":
+                    return {
+                      bg: "bg-green-50",
+                      border: "border-green-200",
+                      icon: "text-green-600",
+                      dot: "bg-green-400",
+                    };
+                  case "photo_memory":
+                    return {
+                      bg: "bg-blue-50",
+                      border: "border-blue-200",
+                      icon: "text-blue-600",
+                      dot: "bg-blue-400",
+                    };
+                  case "overdue_promise":
+                    return {
+                      bg: "bg-orange-50",
+                      border: "border-orange-200",
+                      icon: "text-orange-600",
+                      dot: "bg-orange-400",
+                    };
+                  case "relationship_insight":
+                    return {
+                      bg: "bg-pink-50",
+                      border: "border-pink-200",
+                      icon: "text-pink-600",
+                      dot: "bg-pink-400",
+                    };
+                  default:
+                    return {
+                      bg: "bg-gray-50",
+                      border: "border-gray-200",
+                      icon: "text-gray-600",
+                      dot: "bg-gray-400",
+                    };
+                }
               };
 
-              const gradient =
-                gradients[item.type as keyof typeof gradients] ||
-                "gradient-cyan";
+              const itemStyle = getItemStyle(item.type);
 
               return (
                 <div
                   key={item.id}
-                  className={`card-colorful ${gradient} p-5 overflow-hidden`}
+                  className={`card-floating p-6 ${itemStyle.bg} ${itemStyle.border} border-l-4`}
                 >
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                      <div className="text-white">{getItemIcon(item.type)}</div>
+                    <div
+                      className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm`}
+                    >
+                      <div className={itemStyle.icon}>
+                        {getItemIcon(item.type)}
+                      </div>
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-bold text-white text-lg leading-tight mb-1">
-                            {item.title}
-                          </h3>
-                          <p className="text-sm text-white/80 leading-relaxed mb-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div
+                              className={`w-2 h-2 ${itemStyle.dot} rounded-full animate-pulse`}
+                            ></div>
+                            <h3 className="font-bold text-gray-900 text-lg">
+                              {item.title}
+                            </h3>
+                          </div>
+                          <p className="text-gray-700 mb-4 leading-relaxed">
                             {item.description}
                           </p>
 
                           {/* Person info */}
                           {person && (
-                            <div className="flex items-center space-x-3 bg-white/20 rounded-xl p-3">
+                            <div className="flex items-center space-x-3 bg-white/70 rounded-xl p-3 backdrop-blur-sm">
                               {person.avatar ? (
                                 <img
                                   src={person.avatar}
                                   alt={person.name}
-                                  className="w-8 h-8 rounded-lg border-2 border-white shadow-sm"
+                                  className="w-10 h-10 rounded-xl border-2 border-white shadow-sm"
                                 />
                               ) : (
-                                <div className="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center">
-                                  <span className="text-sm font-bold text-white">
+                                <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center">
+                                  <span className="text-sm font-bold text-gray-600">
                                     {person.name.charAt(0)}
                                   </span>
                                 </div>
                               )}
                               <div className="flex-1">
-                                <span className="text-sm font-semibold text-white block">
+                                <span className="text-sm font-semibold text-gray-900 block">
                                   {person.name}
                                 </span>
-                                <span className="text-xs text-white/70">
+                                <span className="text-xs text-gray-500">
                                   {formatDate(item.date)}
                                 </span>
                               </div>
@@ -192,7 +231,7 @@ const Inbox: React.FC = () => {
                         {/* Dismiss button */}
                         <button
                           onClick={() => handleDismiss(item.id)}
-                          className="p-2 bg-white/20 rounded-xl text-white hover:bg-white/30 transition-colors"
+                          className="p-2 bg-white/70 hover:bg-white rounded-xl text-gray-600 hover:text-gray-800 transition-all"
                           title="Dismiss"
                         >
                           <XMarkIcon className="w-5 h-5" />
@@ -243,14 +282,14 @@ const Inbox: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="card-colorful gradient-cyan p-8 text-center">
-            <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-float">
-              <InboxIcon className="w-10 h-10 text-white" />
+          <div className="card-floating p-12 text-center">
+            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8 animate-breathe">
+              <InboxIcon className="w-12 h-12 text-green-600" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-3">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
               All caught up! 🎉
             </h3>
-            <p className="text-white/80 text-lg max-w-sm mx-auto">
+            <p className="text-gray-600 text-lg max-w-md mx-auto">
               No new relationship insights or moments detected. DoFo is quietly
               monitoring and will surface important updates here.
             </p>
@@ -260,49 +299,36 @@ const Inbox: React.FC = () => {
         {/* Dismissed Items */}
         {dismissedItems.length > 0 && (
           <div>
-            <details className="card-modern overflow-hidden">
-              <summary className="p-4 cursor-pointer hover:bg-gray-50 transition-colors">
+            <details className="card-floating overflow-hidden">
+              <summary className="p-6 cursor-pointer hover:bg-gray-50 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span
-                    className="font-semibold"
-                    style={{ color: "var(--text-primary)" }}
-                  >
+                  <span className="font-semibold text-gray-900">
                     Dismissed Items ({dismissedItems.length})
                   </span>
-                  <ChevronRightIcon
-                    className="w-5 h-5"
-                    style={{ color: "var(--text-tertiary)" }}
-                  />
+                  <ChevronRightIcon className="w-5 h-5 text-gray-400" />
                 </div>
               </summary>
 
-              <div className="border-t border-gray-200 p-4 space-y-3">
+              <div className="border-t border-gray-200 p-6 space-y-4">
                 {dismissedItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl opacity-75"
+                    className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl opacity-60"
                   >
-                    <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
-                      {getItemIcon(item.type)}
+                    <div className="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center">
+                      <div className="text-gray-500">
+                        {getItemIcon(item.type)}
+                      </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4
-                        className="font-medium truncate"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
+                      <h4 className="font-medium text-gray-600 truncate">
                         {item.title}
                       </h4>
-                      <p
-                        className="text-sm truncate"
-                        style={{ color: "var(--text-tertiary)" }}
-                      >
+                      <p className="text-sm text-gray-500 truncate">
                         {item.description}
                       </p>
                     </div>
-                    <span
-                      className="text-xs"
-                      style={{ color: "var(--text-tertiary)" }}
-                    >
+                    <span className="text-xs text-gray-400">
                       {formatDate(item.date)}
                     </span>
                   </div>
@@ -312,36 +338,43 @@ const Inbox: React.FC = () => {
           </div>
         )}
 
-        {/* Help text */}
-        <div className="card-colorful gradient-purple p-6 mb-20">
-          <h4 className="font-bold text-white text-lg mb-3">
-            💡 How Inbox Works
-          </h4>
-          <ul className="text-sm text-white/90 space-y-2">
-            <li className="flex items-start space-x-2">
-              <span className="w-1 h-1 bg-white/60 rounded-full mt-2 flex-shrink-0"></span>
-              <span>
+        {/* Help Section */}
+        <div className="card-floating p-8">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">💡</span>
+            </div>
+            <h4 className="text-xl font-bold text-gray-900 mb-2">
+              How Inbox Works
+            </h4>
+          </div>
+          <div className="space-y-4 max-w-md mx-auto">
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+              <span className="text-gray-700">
                 DoFo analyzes your contacts and calendar for meaningful moments
               </span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <span className="w-1 h-1 bg-white/60 rounded-full mt-2 flex-shrink-0"></span>
-              <span>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
+              <span className="text-gray-700">
                 Important dates, job changes, and relationship gaps are surfaced
                 here
               </span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <span className="w-1 h-1 bg-white/60 rounded-full mt-2 flex-shrink-0"></span>
-              <span>Tap dismiss on items you don't want to act on</span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <span className="w-1 h-1 bg-white/60 rounded-full mt-2 flex-shrink-0"></span>
-              <span>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+              <span className="text-gray-700">
+                Tap dismiss on items you don't want to act on
+              </span>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div>
+              <span className="text-gray-700">
                 AI suggests the most helpful actions for each situation
               </span>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

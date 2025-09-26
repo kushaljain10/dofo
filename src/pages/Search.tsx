@@ -7,24 +7,45 @@ import {
   DocumentTextIcon,
   ClockIcon,
   SparklesIcon,
+  MicrophoneIcon,
+  StopIcon,
 } from "@heroicons/react/24/outline";
 import { SearchResult } from "../types";
 import { mockPeople, mockAdviceResponses } from "../data/mockData";
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState("");
-  const [searchMode, setSearchMode] = useState<"search" | "add" | "ask">(
-    "search"
-  );
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Mock user name - in real app, get from context/storage
+  const userName = "Alex";
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state === "recording"
+      ) {
+        mediaRecorderRef.current.stop();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -34,21 +55,62 @@ const Search: React.FC = () => {
       setResults([]);
       setShowSuggestions(true);
     }
-  }, [query, searchMode]);
+  }, [query]);
 
   const detectIntent = (text: string) => {
-    const addKeywords = ["add", "note", "remember", "save", "promise"];
+    const lowerText = text.toLowerCase().trim();
+
+    // Enhanced ADD keywords for saving information
+    const addKeywords = [
+      "add",
+      "note",
+      "remember",
+      "save",
+      "promise",
+      "record",
+      "log",
+      "track",
+      "remind me",
+      "don't forget",
+      "meeting with",
+      "birthday",
+      "anniversary",
+      "deadline",
+      "task",
+      "todo",
+      "schedule",
+      "appointment",
+      "event",
+    ];
+
+    // Enhanced ASK keywords for advice/help
     const askKeywords = [
       "how",
       "what",
+      "why",
+      "when",
+      "where",
       "advice",
       "suggest",
       "help",
       "should",
       "gift",
+      "recommend",
+      "tell me",
+      "explain",
+      "guide",
+      "write",
+      "draft",
+      "compose",
+      "create",
+      "generate",
+      "ideas",
+      "tips",
+      "can you",
+      "please",
+      "help me",
+      "should i",
     ];
-
-    const lowerText = text.toLowerCase();
 
     if (addKeywords.some((keyword) => lowerText.includes(keyword))) {
       return "add";
@@ -61,8 +123,7 @@ const Search: React.FC = () => {
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
-    const intent = detectIntent(value);
-    setSearchMode(intent);
+    // AI automatically detects intent based on keywords - no manual selection needed
   };
 
   const handleSearch = async () => {
@@ -70,10 +131,13 @@ const Search: React.FC = () => {
 
     setIsLoading(true);
 
+    // AI automatically detects user intent
+    const detectedIntent = detectIntent(query);
+
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    if (searchMode === "search") {
+    if (detectedIntent === "search") {
       // Search through people, notes, interactions
       const peopleResults: SearchResult[] = mockPeople
         .filter(
@@ -112,7 +176,7 @@ const Search: React.FC = () => {
         );
 
       setResults([...peopleResults, ...noteResults]);
-    } else if (searchMode === "ask") {
+    } else if (detectedIntent === "ask") {
       // Generate AI advice
       const adviceResults: SearchResult[] = mockAdviceResponses.map(
         (response) => ({
@@ -138,39 +202,79 @@ const Search: React.FC = () => {
     handleQueryChange(suggestion);
   };
 
-  const getModeColor = () => {
-    switch (searchMode) {
-      case "add":
-        return "border-green-300 ring-green-500 bg-green-50";
-      case "ask":
-        return "border-purple-300 ring-purple-500 bg-purple-50";
-      default:
-        return "border-primary-300 ring-primary-500 bg-white";
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+
+      const audioChunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+        handleVoiceMessage(audioBlob);
+
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingDuration(0);
+
+      // Start duration counter
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      alert("Could not access microphone. Please check permissions.");
     }
   };
 
-  const getModeIcon = () => {
-    switch (searchMode) {
-      case "add":
-        return <PlusIcon className="w-5 h-5 text-green-600" />;
-      case "ask":
-        return (
-          <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-purple-600" />
-        );
-      default:
-        return <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />;
+  const stopRecording = () => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
+      mediaRecorderRef.current.stop();
+    }
+
+    if (recordingIntervalRef.current) {
+      clearInterval(recordingIntervalRef.current);
+      recordingIntervalRef.current = null;
+    }
+
+    setIsRecording(false);
+    setRecordingDuration(0);
+  };
+
+  const handleVoiceMessage = async (audioBlob: Blob) => {
+    setIsLoading(true);
+
+    // Simulate voice transcription and processing
+    setTimeout(() => {
+      const transcribedText = "Help me write a birthday message for my sister";
+      setQuery(transcribedText);
+      handleQueryChange(transcribedText);
+    }, 2000);
+  };
+
+  const handleVoiceButtonClick = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
     }
   };
 
-  const getModeText = () => {
-    switch (searchMode) {
-      case "add":
-        return "Add mode: Save notes, promises, or events";
-      case "ask":
-        return "Ask mode: Get AI advice and suggestions";
-      default:
-        return "Search mode: Find people, notes, or interactions";
-    }
+  const formatRecordingTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const suggestions = {
@@ -197,42 +301,123 @@ const Search: React.FC = () => {
   return (
     <div className="min-h-screen gradient-minimal">
       {/* Header with Holographic Orb */}
-      <div className="relative px-6 pt-16 pb-8">
+      <div className="relative px-6 pt-16 pb-6">
         {/* Background */}
         <div className="absolute inset-0 gradient-holographic opacity-30"></div>
-        
+
         <div className="relative text-center">
           {/* AI Assistant Badge */}
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 rounded-full mb-8 backdrop-blur-md">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 rounded-full mb-6 backdrop-blur-md">
             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             <span className="text-sm font-medium text-gray-700">AI Chat</span>
             <span className="text-sm font-bold text-purple-600">DoFo</span>
           </div>
 
-          {/* Holographic Orb */}
-          <div className="flex justify-center mb-8">
-            <div className="orb-holographic animate-breathe mx-auto"></div>
+          {/* Voice Recording Orb */}
+          <div className="flex justify-center mb-6">
+            <button
+              onClick={handleVoiceButtonClick}
+              className={`relative w-24 h-24 rounded-full transition-all duration-300 ${
+                isRecording
+                  ? "bg-red-500 animate-pulse shadow-lg shadow-red-500/50"
+                  : "orb-holographic animate-breathe hover:scale-110"
+              }`}
+            >
+              {/* Microphone Icon */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                {isRecording ? (
+                  <StopIcon className="w-8 h-8 text-white" />
+                ) : (
+                  <MicrophoneIcon className="w-8 h-8 text-white" />
+                )}
+              </div>
+
+              {/* Recording Animation Ring */}
+              {isRecording && (
+                <div className="absolute inset-0 rounded-full border-4 border-red-300 animate-ping"></div>
+              )}
+            </button>
           </div>
 
+          {/* Recording Status */}
+          {isRecording && (
+            <div className="text-center mb-4">
+              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-red-100 rounded-full">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-red-700">
+                  Recording {formatRecordingTime(recordingDuration)}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* AI Assistant Greeting */}
-          <div className="max-w-sm mx-auto mb-8">
+          <div className="max-w-sm mx-auto mb-6">
             <p className="text-sm text-gray-500 mb-2">AI assistant</p>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Greetings, <span className="text-purple-600">human!</span>
-            </h1>
-            <p className="text-lg text-gray-700">
-              How may I <span className="text-purple-600">assist you</span> today?
-            </p>
+            {isRecording ? (
+              <>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                  <span className="text-red-600">Listening...</span>
+                </h1>
+                <p className="text-lg text-gray-700">
+                  Tap the <span className="text-red-600">stop</span> button when
+                  you're done
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                  Greetings,{" "}
+                  <span className="text-purple-600">{userName}!</span>
+                </h1>
+                <p className="text-lg text-gray-700">
+                  <span className="text-purple-600">Tap the orb</span> to speak
+                  or type below
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Multi-use Search Bar - Always Visible */}
+      <div className="px-6 pb-6">
+        <div className="card-floating p-6">
+          <div className="relative">
+            <div className="flex items-center space-x-4 mb-4">
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => handleQueryChange(e.target.value)}
+                placeholder="Search, add, or ask for advice..."
+                className="flex-1 px-6 py-4 bg-gray-50 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-purple-300 transition-all"
+              />
+              <div className="flex items-center space-x-2">
+                {isLoading ? (
+                  <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
+                    <SparklesIcon className="w-6 h-6 text-purple-600 animate-pulse" />
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleSearch}
+                    className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-md"
+                  >
+                    <MagnifyingGlassIcon className="w-6 h-6 text-white" />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Suggestion Chips */}
-      <div className="px-6 pb-8">
+      <div className="px-6 pb-32">
         {!query && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Quick Action Chips */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => handleSuggestionClick("Write an email")}
                 className="card-glass p-6 text-left group hover:scale-105 transition-all duration-300"
@@ -250,12 +435,14 @@ const Search: React.FC = () => {
                 <div className="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors">
                   <SparklesIcon className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="font-medium text-gray-900 mb-1">Tell me a fun fact</p>
+                <p className="font-medium text-gray-900 mb-1">
+                  Tell me a fun fact
+                </p>
               </button>
             </div>
 
             {/* More Suggestions */}
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-4">
               <button
                 onClick={() => handleSuggestionClick("Give me ideas")}
                 className="card-glass p-4 text-left group hover:scale-105 transition-all duration-300"
@@ -288,12 +475,16 @@ const Search: React.FC = () => {
                   <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
                     <MagnifyingGlassIcon className="w-4 h-4 text-purple-600" />
                   </div>
-                  <p className="font-medium text-gray-900">Plan a trip a like</p>
+                  <p className="font-medium text-gray-900">
+                    Plan a trip a like
+                  </p>
                 </div>
               </button>
 
               <button
-                onClick={() => handleSuggestionClick("Quiz me on world knowledge")}
+                onClick={() =>
+                  handleSuggestionClick("Quiz me on world knowledge")
+                }
                 className="card-glass p-4 text-left group hover:scale-105 transition-all duration-300"
               >
                 <div className="flex items-center space-x-3">
@@ -310,9 +501,7 @@ const Search: React.FC = () => {
         {/* Results */}
         {results.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-3">
-              {searchMode === "ask" ? "AI Suggestions" : "Results"}
-            </h3>
+            <h3 className="text-sm font-medium text-gray-900 mb-3">Results</h3>
             <div className="space-y-3">
               {results.map((result) => (
                 <div
@@ -364,39 +553,6 @@ const Search: React.FC = () => {
             </p>
           </div>
         )}
-
-      </div>
-
-      {/* Floating Input Bar */}
-      <div className="fixed bottom-6 left-6 right-6">
-        <div className="relative">
-          <div className="card-glass px-6 py-4 rounded-full backdrop-blur-md border border-white/30">
-            <div className="flex items-center space-x-4">
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(e) => handleQueryChange(e.target.value)}
-                placeholder="Message AI assistant"
-                className="flex-1 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none"
-              />
-              <div className="flex items-center space-x-2">
-                {isLoading ? (
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                    <SparklesIcon className="w-5 h-5 text-purple-600 animate-pulse" />
-                  </div>
-                ) : (
-                  <button 
-                    onClick={handleSearch}
-                    className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center hover:scale-105 transition-transform"
-                  >
-                    <MagnifyingGlassIcon className="w-5 h-5 text-white" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

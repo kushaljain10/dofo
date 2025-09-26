@@ -14,30 +14,32 @@ interface PersonCardProps {
 }
 
 const PersonCard: React.FC<PersonCardProps> = ({ person, onClick }) => {
-  const getHealthScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-500";
-    if (score >= 60) return "text-yellow-500";
-    return "text-red-500";
+  const getHealthScoreGradient = (score: number) => {
+    if (score >= 80) return "from-green-400 to-emerald-500";
+    if (score >= 60) return "from-yellow-400 to-orange-500";
+    return "from-red-400 to-pink-500";
   };
 
-  const getHealthScoreBg = (score: number) => {
-    if (score >= 80) return "bg-green-50 border-green-200";
-    if (score >= 60) return "bg-yellow-50 border-yellow-200";
-    return "bg-red-50 border-red-200";
-  };
-
-  const getRelationColor = (relation: string) => {
+  const getRelationStyle = (relation: string) => {
     switch (relation) {
       case "family":
-        return "bg-purple-100 text-purple-800";
+        return {
+          bg: "bg-purple-50",
+          text: "text-purple-600",
+          dot: "bg-purple-400",
+        };
       case "close":
-        return "bg-pink-100 text-pink-800";
+        return { bg: "bg-pink-50", text: "text-pink-600", dot: "bg-pink-400" };
       case "friends":
-        return "bg-blue-100 text-blue-800";
+        return { bg: "bg-blue-50", text: "text-blue-600", dot: "bg-blue-400" };
       case "work":
-        return "bg-green-100 text-green-800";
+        return {
+          bg: "bg-green-50",
+          text: "text-green-600",
+          dot: "bg-green-400",
+        };
       default:
-        return "bg-gray-100 text-gray-800";
+        return { bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400" };
     }
   };
 
@@ -74,85 +76,142 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, onClick }) => {
     new Date(person.nextMilestone.date).getTime() - new Date().getTime() <=
       7 * 24 * 60 * 60 * 1000;
 
+  const relationStyle = getRelationStyle(person.relation);
+
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl border p-4 mb-3 cursor-pointer transition-all hover:shadow-md hover:border-primary-300 ${
-        isOverdue ? "border-l-4 border-l-red-400" : "border-gray-200"
-      }`}
+      className="card-floating p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group"
     >
-      <div className="flex items-center space-x-3">
-        {/* Avatar */}
+      <div className="flex items-start space-x-4">
+        {/* Avatar with Health Score */}
         <div className="relative flex-shrink-0">
           {person.avatar ? (
             <img
               src={person.avatar}
               alt={person.name}
-              className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
+              className="w-16 h-16 rounded-2xl shadow-md"
             />
           ) : (
-            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
+            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center">
+              <span className="text-lg font-bold text-gray-600">
                 {person.name.charAt(0)}
               </span>
             </div>
           )}
 
-          {/* Health score indicator */}
-          <div
-            className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center ${getHealthScoreBg(
-              person.healthScore
-            )}`}
-          >
-            <span
-              className={`text-xs font-bold ${getHealthScoreColor(
-                person.healthScore
-              )}`}
-            >
-              {person.healthScore}
-            </span>
+          {/* Health Score Ring */}
+          <div className="absolute -bottom-2 -right-2">
+            <div className="relative w-8 h-8">
+              <svg className="w-8 h-8 -rotate-90" viewBox="0 0 36 36">
+                <path
+                  d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
+                  fill="none"
+                  stroke="#f3f4f6"
+                  strokeWidth="3"
+                />
+                <path
+                  d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
+                  fill="none"
+                  stroke="url(#healthGradient)"
+                  strokeWidth="3"
+                  strokeDasharray={`${person.healthScore}, 100`}
+                  className="transition-all duration-500"
+                  strokeLinecap="round"
+                />
+                <defs>
+                  <linearGradient
+                    id="healthGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop
+                      offset="0%"
+                      className={`${getHealthScoreGradient(person.healthScore)
+                        .split(" ")[0]
+                        .replace("from-", "stop-")}`}
+                    />
+                    <stop
+                      offset="100%"
+                      className={`${getHealthScoreGradient(person.healthScore)
+                        .split(" ")[2]
+                        .replace("to-", "stop-")}`}
+                    />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-gray-700">
+                  {person.healthScore}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2 mb-1">
-            <h3 className="font-semibold text-gray-900 truncate">
-              {person.name}
-            </h3>
-            {isOverdue && (
-              <ExclamationTriangleIcon className="w-4 h-4 text-red-500 flex-shrink-0" />
+          {/* Header */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+                {person.name}
+              </h3>
+              {isOverdue && (
+                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+              )}
+            </div>
+            {person.healthScore >= 80 ? (
+              <HeartIconSolid className="w-6 h-6 text-red-400" />
+            ) : (
+              <HeartIcon className="w-6 h-6 text-gray-300" />
             )}
           </div>
 
-          {/* Relation tag */}
-          <div className="flex items-center space-x-2 mb-2">
-            <span
-              className={`px-2 py-1 text-xs font-medium rounded-full ${getRelationColor(
-                person.relation
-              )}`}
+          {/* Relation & Status */}
+          <div className="flex items-center space-x-3 mb-4">
+            <div
+              className={`flex items-center space-x-2 px-3 py-2 ${relationStyle.bg} rounded-full`}
             >
-              {person.relation}
-            </span>
-            {hasUpcomingMilestone && (
-              <span className="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 text-primary-800">
-                milestone soon
+              <div
+                className={`w-2 h-2 ${relationStyle.dot} rounded-full`}
+              ></div>
+              <span
+                className={`text-sm font-semibold ${relationStyle.text} capitalize`}
+              >
+                {person.relation}
               </span>
+            </div>
+            {hasUpcomingMilestone && (
+              <div className="flex items-center space-x-2 px-3 py-2 bg-yellow-50 rounded-full">
+                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-yellow-600">
+                  milestone soon
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Meta info */}
-          <div className="space-y-1">
-            <div className="flex items-center space-x-1 text-xs text-gray-500">
-              <ClockIcon className="w-3 h-3" />
-              <span>Last contact: {formatLastContact()}</span>
+          {/* Meta Info Cards */}
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+              <ClockIcon className="w-4 h-4 text-gray-500" />
+              <span className="text-sm text-gray-700">
+                <span className="font-medium">Last contact:</span>{" "}
+                {formatLastContact()}
+              </span>
             </div>
 
             {person.nextMilestone && (
-              <div className="flex items-center space-x-1 text-xs text-gray-500">
-                <CalendarDaysIcon className="w-3 h-3" />
-                <span>
-                  {person.nextMilestone.description} {formatNextMilestone()}
+              <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-xl">
+                <CalendarDaysIcon className="w-4 h-4 text-blue-500" />
+                <span className="text-sm text-blue-700">
+                  <span className="font-medium">
+                    {person.nextMilestone.description}
+                  </span>{" "}
+                  {formatNextMilestone()}
                 </span>
               </div>
             )}
@@ -160,48 +219,45 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, onClick }) => {
 
           {/* Tags */}
           {person.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
+            <div className="flex flex-wrap gap-2">
               {person.tags.slice(0, 3).map((tag, index) => (
                 <span
                   key={index}
-                  className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
+                  className="px-3 py-1 text-xs font-medium bg-white rounded-full border border-gray-200 text-gray-600"
                 >
                   {tag}
                 </span>
               ))}
               {person.tags.length > 3 && (
-                <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
-                  +{person.tags.length - 3}
+                <span className="px-3 py-1 text-xs font-medium bg-white rounded-full border border-gray-200 text-gray-600">
+                  +{person.tags.length - 3} more
                 </span>
               )}
             </div>
           )}
         </div>
-
-        {/* Health indicator */}
-        <div className="flex-shrink-0">
-          {person.healthScore >= 80 ? (
-            <HeartIconSolid className="w-5 h-5 text-green-500" />
-          ) : (
-            <HeartIcon
-              className={`w-5 h-5 ${getHealthScoreColor(person.healthScore)}`}
-            />
-          )}
-        </div>
       </div>
 
-      {/* Progress indicators */}
+      {/* Bottom Status Bar */}
       {(person.promises.length > 0 || isOverdue) && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center justify-between text-xs">
+        <div className="mt-6 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
             {person.promises.length > 0 && (
-              <span className="text-gray-600">
-                {person.promises.filter((p) => !p.completed).length} open
-                promises
-              </span>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <span className="text-sm font-medium text-gray-700">
+                  {person.promises.filter((p) => !p.completed).length} open
+                  promises
+                </span>
+              </div>
             )}
             {isOverdue && (
-              <span className="text-red-600 font-medium">Overdue contact</span>
+              <div className="flex items-center space-x-2">
+                <ExclamationTriangleIcon className="w-4 h-4 text-red-400" />
+                <span className="text-sm font-medium text-red-600">
+                  Overdue contact
+                </span>
+              </div>
             )}
           </div>
         </div>

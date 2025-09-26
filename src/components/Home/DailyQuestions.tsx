@@ -20,33 +20,93 @@ const mockQuestions: Question[] = [
   {
     id: "q1",
     category: "family",
-    text: "What's Ananya's favorite cuisine?",
+    text: "How often should you check in with your parents?",
     type: "chips",
-    options: ["Indian", "Chinese", "Italian", "Mexican", "Thai", "Other"],
+    options: ["Daily", "Few times a week", "Weekly", "Fortnightly", "Monthly"],
+  },
+  {
+    id: "q2",
+    category: "close",
+    text: "What's the best way to show support when Ananya is stressed?",
+    type: "chips",
+    options: [
+      "Listen without advice",
+      "Offer practical help",
+      "Give space",
+      "Plan distraction",
+      "Send encouraging texts",
+    ],
     personId: "1",
     personName: "Ananya",
   },
   {
-    id: "q2",
-    category: "preferences",
-    text: "How do you prefer to celebrate birthdays?",
+    id: "q3",
+    category: "work",
+    text: "How do you prefer to celebrate achievements at work?",
     type: "chips",
     options: [
-      "Small gathering",
-      "Big party",
-      "Quiet dinner",
-      "Just family",
-      "Skip it",
+      "Team lunch",
+      "Public recognition",
+      "Personal note",
+      "Small gift",
+      "Just acknowledgment",
     ],
   },
   {
-    id: "q3",
-    category: "work",
-    text: "What time does Vikram prefer for meetings?",
+    id: "q4",
+    category: "self",
+    text: "What time of day do you feel most energetic for important conversations?",
     type: "chips",
-    options: ["Morning", "Afternoon", "Evening", "Flexible"],
-    personId: "5",
-    personName: "Vikram",
+    options: [
+      "Early morning",
+      "Mid-morning",
+      "Afternoon",
+      "Evening",
+      "It varies",
+    ],
+  },
+  {
+    id: "q5",
+    category: "friends",
+    text: "When was the last time you had a meaningful conversation with Priya?",
+    type: "chips",
+    options: [
+      "This week",
+      "Last week",
+      "This month",
+      "Few months ago",
+      "Can't remember",
+    ],
+    personId: "3",
+    personName: "Priya",
+  },
+  {
+    id: "q6",
+    category: "family",
+    text: "What's your mom's preferred way to receive care when she's unwell?",
+    type: "chips",
+    options: [
+      "Home-cooked meals",
+      "Company & conversation",
+      "Help with tasks",
+      "Space to rest",
+      "Medical assistance",
+    ],
+    personId: "2",
+    personName: "Mom",
+  },
+  {
+    id: "q7",
+    category: "work",
+    text: "How do you typically handle conflicts with colleagues?",
+    type: "chips",
+    options: [
+      "Direct conversation",
+      "Mediation through manager",
+      "Give it time",
+      "Address via email",
+      "Seek HR guidance",
+    ],
   },
 ];
 
@@ -66,17 +126,53 @@ const DailyQuestions: React.FC<DailyQuestionsProps> = ({ onComplete }) => {
   const getCategoryStyle = (category: string) => {
     switch (category) {
       case "family":
-        return { gradient: "gradient-purple", bg: "bg-white/20" };
+        return {
+          bg: "bg-purple-50",
+          border: "border-purple-200",
+          icon: "text-purple-600",
+          dot: "bg-purple-400",
+          iconBg: "bg-purple-100",
+        };
       case "close":
-        return { gradient: "gradient-pink", bg: "bg-white/20" };
+        return {
+          bg: "bg-pink-50",
+          border: "border-pink-200",
+          icon: "text-pink-600",
+          dot: "bg-pink-400",
+          iconBg: "bg-pink-100",
+        };
       case "friends":
-        return { gradient: "gradient-blue", bg: "bg-white/20" };
+        return {
+          bg: "bg-blue-50",
+          border: "border-blue-200",
+          icon: "text-blue-600",
+          dot: "bg-blue-400",
+          iconBg: "bg-blue-100",
+        };
       case "work":
-        return { gradient: "gradient-lime", bg: "bg-white/20" };
+        return {
+          bg: "bg-green-50",
+          border: "border-green-200",
+          icon: "text-green-600",
+          dot: "bg-green-400",
+          iconBg: "bg-green-100",
+        };
       case "self":
-        return { gradient: "gradient-cyan", bg: "bg-white/20" };
+        return {
+          bg: "bg-orange-50",
+          border: "border-orange-200",
+          icon: "text-orange-600",
+          dot: "bg-orange-400",
+          iconBg: "bg-orange-100",
+        };
       default:
-        return { gradient: "gradient-orange", bg: "bg-white/20" };
+        return {
+          bg: "bg-gray-50",
+          border: "border-gray-200",
+          icon: "text-gray-600",
+          dot: "bg-gray-400",
+          iconBg: "bg-gray-100",
+        };
     }
   };
 
@@ -114,69 +210,83 @@ const DailyQuestions: React.FC<DailyQuestionsProps> = ({ onComplete }) => {
   const categoryStyle = getCategoryStyle(currentQuestion.category);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Progress indicators */}
       <div className="flex space-x-2">
         {mockQuestions.map((_, index) => (
           <div
             key={index}
-            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-              index <= currentQuestionIndex ? "gradient-rainbow" : "bg-gray-200"
+            className={`h-2 flex-1 rounded-full transition-all duration-500 ${
+              index <= currentQuestionIndex ? "bg-purple-500" : "bg-gray-200"
             }`}
           />
         ))}
       </div>
 
       {/* Question Card */}
-      <div className={`card-colorful ${categoryStyle.gradient} p-6`}>
+      <div
+        className={`card-floating ${categoryStyle.bg} ${categoryStyle.border} border-l-4 p-4`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
-              <QuestionMarkCircleIcon className="w-5 h-5 text-white" />
+            <div
+              className={`w-10 h-10 ${categoryStyle.iconBg} rounded-xl flex items-center justify-center`}
+            >
+              <QuestionMarkCircleIcon
+                className={`w-5 h-5 ${categoryStyle.icon}`}
+              />
             </div>
             <div>
-              <span className="font-bold text-white text-sm">
-                Quick Question
-              </span>
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`w-2 h-2 ${categoryStyle.dot} rounded-full animate-pulse`}
+                ></div>
+                <span className="font-semibold text-gray-900 text-sm capitalize">
+                  {currentQuestion.category} Question
+                </span>
+                <span className="text-xs font-medium text-gray-500">
+                  {currentQuestionIndex + 1} of {mockQuestions.length}
+                </span>
+              </div>
               {currentQuestion.personName && (
                 <div
-                  className={`mt-1 px-3 py-1 text-xs font-medium text-white rounded-xl ${categoryStyle.bg}`}
+                  className={`inline-flex items-center px-2 py-1 text-xs font-medium ${categoryStyle.icon} ${categoryStyle.bg} rounded-full border ${categoryStyle.border} mt-1`}
                 >
                   About {currentQuestion.personName}
                 </div>
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <span className="text-xs font-medium text-white/80">
-              {currentQuestionIndex + 1} of {mockQuestions.length}
-            </span>
-            <button
-              onClick={handleDismiss}
-              className="p-2 bg-white/20 rounded-xl text-white hover:bg-white/30 transition-colors"
-            >
-              <XMarkIcon className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={handleDismiss}
+            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 transition-colors flex items-center justify-center"
+          >
+            <XMarkIcon className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Question */}
         <div className="mb-6">
-          <h3 className="text-lg font-bold text-white mb-4 leading-tight">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 leading-tight">
             {currentQuestion.text}
           </h3>
 
           {/* Answer Options */}
           {currentQuestion.type === "chips" && currentQuestion.options && (
-            <div className="flex flex-wrap gap-3">
+            <div className="grid grid-cols-1 gap-3">
               {currentQuestion.options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswer(option)}
-                  className="btn-modern bg-white text-gray-800 hover:bg-gray-50 text-sm font-semibold"
+                  className="btn-glass text-left px-6 py-4 text-gray-700 hover:bg-white/80 hover:scale-[1.02] transition-all duration-200 font-medium"
                 >
-                  {option}
+                  <div className="flex items-center space-x-3">
+                    <div
+                      className={`w-3 h-3 ${categoryStyle.dot} rounded-full opacity-60`}
+                    ></div>
+                    <span>{option}</span>
+                  </div>
                 </button>
               ))}
             </div>
@@ -189,12 +299,12 @@ const DailyQuestions: React.FC<DailyQuestionsProps> = ({ onComplete }) => {
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
                 placeholder="Type your answer..."
-                className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/70 focus:outline-none focus:bg-white/30 focus:border-white/50 transition-colors"
+                className="w-full px-6 py-4 bg-white/70 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-purple-300 transition-colors"
               />
               <button
                 onClick={() => handleAnswer(textInput)}
                 disabled={!textInput.trim()}
-                className="btn-modern bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="btn-minimal bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 <span>Submit</span>
                 <ArrowRightIcon className="w-4 h-4" />
@@ -204,17 +314,13 @@ const DailyQuestions: React.FC<DailyQuestionsProps> = ({ onComplete }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between">
+        <div className="flex justify-center pt-4 border-t border-gray-200">
           <button
             onClick={handleSkip}
-            className="text-sm font-medium text-white/80 hover:text-white transition-colors px-3 py-2"
+            className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors px-4 py-2"
           >
-            Skip this question
+            Skip
           </button>
-
-          <div className="text-xs font-medium text-white/70">
-            Helps DoFo give better advice ✨
-          </div>
         </div>
       </div>
     </div>

@@ -28,19 +28,19 @@ const BottomNavigation: React.FC = () => {
       iconSolid: HomeIconSolid,
     },
     {
+      id: "people",
+      label: "People",
+      path: "/people",
+      icon: UserGroupIcon,
+      iconSolid: UserGroupIconSolid,
+    },
+    {
       id: "search",
       label: "Search",
       path: "/search",
       icon: MagnifyingGlassIcon,
       iconSolid: MagnifyingGlassIconSolid,
       isCenter: true,
-    },
-    {
-      id: "people",
-      label: "People",
-      path: "/people",
-      icon: UserGroupIcon,
-      iconSolid: UserGroupIconSolid,
     },
     {
       id: "inbox",

@@ -91,16 +91,13 @@ const DailyActionCard: React.FC<DailyActionCardProps> = ({
 
   if (action.completed) {
     return (
-      <div className="card-modern p-4 opacity-75">
+      <div className="card-glass p-6 opacity-80">
         <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 gradient-lime rounded-xl flex items-center justify-center">
-            <CheckCircleIconSolid className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+            <CheckCircleIconSolid className="w-6 h-6 text-green-600" />
           </div>
           <div className="flex-1">
-            <h3
-              className="font-semibold line-through"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <h3 className="font-semibold line-through text-gray-500">
               {action.title}
             </h3>
             <p className="text-sm font-medium text-green-600">Completed ✨</p>
@@ -110,10 +107,21 @@ const DailyActionCard: React.FC<DailyActionCardProps> = ({
     );
   }
 
-  const priorityStyle = getPriorityStyle();
+  const getIconColor = () => {
+    switch (action.priority) {
+      case "high":
+        return "bg-pink-100 text-pink-600";
+      case "medium":
+        return "bg-orange-100 text-orange-600";
+      case "low":
+        return "bg-green-100 text-green-600";
+      default:
+        return "bg-blue-100 text-blue-600";
+    }
+  };
 
   return (
-    <div className={`card-colorful ${priorityStyle.gradient} p-5`}>
+    <div className="card-floating p-6 hover:scale-[1.02] transition-transform duration-300">
       <div className="flex items-start space-x-4">
         {/* Avatar */}
         <div className="flex-shrink-0">
@@ -121,11 +129,11 @@ const DailyActionCard: React.FC<DailyActionCardProps> = ({
             <img
               src={action.personAvatar}
               alt={action.personName}
-              className="w-12 h-12 rounded-xl border-2 border-white shadow-lg"
+              className="w-14 h-14 rounded-2xl border-2 border-gray-100 shadow-sm"
             />
           ) : (
-            <div className="w-12 h-12 bg-white/30 rounded-xl flex items-center justify-center border-2 border-white/50">
-              <span className="text-lg font-bold text-white">
+            <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
+              <span className="text-lg font-bold text-gray-600">
                 {action.personName.charAt(0)}
               </span>
             </div>
@@ -136,33 +144,27 @@ const DailyActionCard: React.FC<DailyActionCardProps> = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h3
-                className={`font-bold text-lg leading-tight ${priorityStyle.textColor} mb-1`}
-              >
+              <h3 className="font-bold text-lg text-gray-900 mb-2">
                 {action.title}
               </h3>
-              <p
-                className={`text-sm ${priorityStyle.textColor}/80 leading-relaxed mb-3`}
-              >
+              <p className="text-gray-600 mb-4 leading-relaxed">
                 {action.description}
               </p>
 
               {/* Meta info */}
-              <div className="flex items-center space-x-4 mb-3">
+              <div className="flex items-center space-x-3 mb-4">
                 <div
-                  className={`flex items-center space-x-2 px-3 py-1 ${priorityStyle.bgOpacity} rounded-xl`}
+                  className={`flex items-center space-x-2 px-3 py-2 ${getIconColor()} rounded-full`}
                 >
-                  <div className="text-white">{getActionIcon()}</div>
-                  <span className="text-xs font-medium text-white capitalize">
+                  <div>{getActionIcon()}</div>
+                  <span className="text-xs font-semibold capitalize">
                     {action.type}
                   </span>
                 </div>
                 {action.dueDate && (
-                  <div
-                    className={`flex items-center space-x-2 px-3 py-1 ${priorityStyle.bgOpacity} rounded-xl`}
-                  >
-                    <ClockIcon className="w-4 h-4 text-white" />
-                    <span className="text-xs font-medium text-white">
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-full">
+                    <ClockIcon className="w-4 h-4 text-gray-600" />
+                    <span className="text-xs font-semibold text-gray-600">
                       {formatDueDate()}
                     </span>
                   </div>
@@ -171,11 +173,11 @@ const DailyActionCard: React.FC<DailyActionCardProps> = ({
 
               {/* Tags */}
               {action.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {action.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className={`px-3 py-1 text-xs font-medium ${priorityStyle.bgOpacity} text-white rounded-xl`}
+                      className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full"
                     >
                       {tag}
                     </span>
@@ -187,42 +189,40 @@ const DailyActionCard: React.FC<DailyActionCardProps> = ({
             {/* Action button */}
             <button
               onClick={() => onComplete(action.id)}
-              className={`p-3 ${priorityStyle.bgOpacity} rounded-xl text-white hover:bg-white/30 transition-all duration-200 transform hover:scale-105 active:scale-95`}
+              className="p-3 bg-gray-100 hover:bg-green-100 rounded-full transition-all duration-200 transform hover:scale-105 active:scale-95 group"
               title="Mark as complete"
             >
-              <CheckCircleIcon className="w-6 h-6" />
+              <CheckCircleIcon className="w-6 h-6 text-gray-600 group-hover:text-green-600 transition-colors" />
             </button>
           </div>
 
           {/* AI Draft Section */}
           {action.aiDraft && (
-            <div className="mt-4 pt-4 border-t border-white/20">
+            <div className="mt-6 pt-4 border-t border-gray-200">
               {!showDraft ? (
                 <button
                   onClick={() => setShowDraft(true)}
-                  className={`text-sm font-medium text-white hover:text-white/80 transition-colors px-4 py-2 ${priorityStyle.bgOpacity} rounded-xl`}
+                  className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors px-4 py-2 bg-purple-50 rounded-full"
                 >
                   View AI-suggested message ✨
                 </button>
               ) : (
-                <div className="space-y-3">
-                  <div
-                    className={`${priorityStyle.bgOpacity} rounded-xl p-4 border border-white/20`}
-                  >
-                    <p className="text-sm text-white/90 italic leading-relaxed">
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
+                    <p className="text-sm text-gray-700 italic leading-relaxed">
                       "{action.aiDraft}"
                     </p>
                   </div>
                   <div className="flex space-x-3">
                     <button
                       onClick={handleSendMessage}
-                      className="btn-modern bg-white text-gray-800 hover:bg-gray-50 flex-1 text-sm font-semibold"
+                      className="btn-minimal bg-purple-600 text-white hover:bg-purple-700 flex-1 text-sm font-semibold"
                     >
                       Send Message
                     </button>
                     <button
                       onClick={() => setShowDraft(false)}
-                      className={`px-4 py-2 text-sm text-white/80 hover:text-white transition-colors rounded-xl ${priorityStyle.bgOpacity}`}
+                      className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors rounded-full bg-gray-100"
                     >
                       Hide
                     </button>
