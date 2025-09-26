@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Welcome from "../components/Onboarding/Welcome";
 import LoginStep from "../components/Onboarding/LoginStep";
@@ -17,6 +17,11 @@ const Onboarding: React.FC = () => {
     { component: PersonalInfoStep, title: "Personal Info" },
     { component: CompleteStep, title: "Complete" },
   ];
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentStep]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {

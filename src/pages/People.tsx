@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Person } from "../types";
 import { mockPeople, mockCircles } from "../data/mockData";
 import PersonCard from "../components/People/PersonCard";
@@ -13,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 const People: React.FC = () => {
+  const navigate = useNavigate();
   const [people] = useState<Person[]>(mockPeople);
   const [filter, setFilter] = useState<
     "all" | "family" | "close" | "friends" | "work"
@@ -75,9 +77,7 @@ const People: React.FC = () => {
   };
 
   const handlePersonClick = (person: Person) => {
-    // In a real app, this would navigate to person detail page
-    console.log("Opening profile for:", person.name);
-    alert(`Opening ${person.name}'s profile (not implemented in demo)`);
+    navigate(`/people/${person.id}`);
   };
 
   const filteredPeople = getFilteredPeople();

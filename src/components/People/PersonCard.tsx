@@ -14,12 +14,6 @@ interface PersonCardProps {
 }
 
 const PersonCard: React.FC<PersonCardProps> = ({ person, onClick }) => {
-  const getHealthScoreGradient = (score: number) => {
-    if (score >= 80) return "from-green-400 to-emerald-500";
-    if (score >= 60) return "from-yellow-400 to-orange-500";
-    return "from-red-400 to-pink-500";
-  };
-
   const getRelationStyle = (relation: string) => {
     switch (relation) {
       case "family":
@@ -100,52 +94,28 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, onClick }) => {
             </div>
           )}
 
-          {/* Health Score Ring */}
-          <div className="absolute -bottom-2 -right-2">
-            <div className="relative w-8 h-8">
-              <svg className="w-8 h-8 -rotate-90" viewBox="0 0 36 36">
-                <path
-                  d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
-                  fill="none"
-                  stroke="#f3f4f6"
-                  strokeWidth="3"
-                />
-                <path
-                  d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
-                  fill="none"
-                  stroke="url(#healthGradient)"
-                  strokeWidth="3"
-                  strokeDasharray={`${person.healthScore}, 100`}
-                  className="transition-all duration-500"
-                  strokeLinecap="round"
-                />
-                <defs>
-                  <linearGradient
-                    id="healthGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
-                  >
-                    <stop
-                      offset="0%"
-                      className={`${getHealthScoreGradient(person.healthScore)
-                        .split(" ")[0]
-                        .replace("from-", "stop-")}`}
-                    />
-                    <stop
-                      offset="100%"
-                      className={`${getHealthScoreGradient(person.healthScore)
-                        .split(" ")[2]
-                        .replace("to-", "stop-")}`}
-                    />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-gray-700">
-                  {person.healthScore}
-                </span>
+          {/* Health Score Badge - Modern Design */}
+          <div className="absolute -top-2 -right-2 z-10">
+            <div
+              className={`relative px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-lg backdrop-blur-sm border border-white/20 ${
+                person.healthScore >= 80
+                  ? "bg-gradient-to-br from-green-400 via-emerald-500 to-green-600"
+                  : person.healthScore >= 60
+                  ? "bg-gradient-to-br from-yellow-400 via-orange-500 to-yellow-600"
+                  : "bg-gradient-to-br from-red-400 via-pink-500 to-red-600"
+              }`}
+            >
+              <div className="flex items-center space-x-1">
+                <div
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    person.healthScore >= 80
+                      ? "bg-green-200"
+                      : person.healthScore >= 60
+                      ? "bg-yellow-200"
+                      : "bg-red-200"
+                  } animate-pulse`}
+                ></div>
+                <span>{person.healthScore}%</span>
               </div>
             </div>
           </div>

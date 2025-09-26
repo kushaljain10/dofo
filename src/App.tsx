@@ -9,6 +9,7 @@ import Layout from "./components/Layout/Layout";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import People from "./pages/People";
+import PersonDetail from "./pages/PersonDetail";
 import Inbox from "./pages/Inbox";
 import Profile from "./pages/Profile";
 import Onboarding from "./pages/Onboarding";
@@ -58,6 +59,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/people" element={<People />} />
+        <Route path="/people/:id" element={<PersonDetail />} />
         <Route path="/inbox" element={<Inbox />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>

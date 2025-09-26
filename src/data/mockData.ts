@@ -18,6 +18,7 @@ export const mockPeople: Person[] = [
     relation: "family",
     circle: ["family"],
     lastContact: new Date("2024-09-20"),
+    contactFrequency: 7, // days
     nextMilestone: {
       type: "birthday",
       date: new Date("2024-10-15"),
@@ -70,6 +71,7 @@ export const mockPeople: Person[] = [
     relation: "close",
     circle: ["close", "work"],
     lastContact: new Date("2024-09-18"),
+    contactFrequency: 14, // days
     nextMilestone: {
       type: "followup",
       date: new Date("2024-09-28"),
@@ -112,6 +114,7 @@ export const mockPeople: Person[] = [
     relation: "friends",
     circle: ["friends"],
     lastContact: new Date("2024-08-25"),
+    contactFrequency: 30, // days
     healthScore: 45,
     tags: ["design", "pune", "travel"],
     cadence: {
@@ -159,6 +162,7 @@ export const mockPeople: Person[] = [
     relation: "family",
     circle: ["family"],
     lastContact: new Date("2024-09-24"),
+    contactFrequency: 3, // days
     nextMilestone: {
       type: "meeting",
       date: new Date("2024-09-29"),
@@ -212,6 +216,7 @@ export const mockPeople: Person[] = [
     relation: "work",
     circle: ["work"],
     lastContact: new Date("2024-09-25"),
+    contactFrequency: 7, // days
     nextMilestone: {
       type: "meeting",
       date: new Date("2024-09-30"),

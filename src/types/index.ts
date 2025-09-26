@@ -7,6 +7,7 @@ export interface Person {
   relation: "family" | "close" | "friends" | "work" | "other";
   circle?: string[];
   lastContact?: Date;
+  contactFrequency: number; // days between contacts
   nextMilestone?: {
     type: "birthday" | "anniversary" | "meeting" | "followup";
     date: Date;
@@ -37,6 +38,7 @@ export interface Promise {
   description: string;
   dueDate: Date;
   completed: boolean;
+  completedDate?: Date;
   personId: string;
   priority: "low" | "medium" | "high";
 }
