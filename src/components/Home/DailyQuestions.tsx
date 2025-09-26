@@ -279,7 +279,7 @@ const DailyQuestions: React.FC<DailyQuestionsProps> = ({ onComplete }) => {
                 <button
                   key={index}
                   onClick={() => handleAnswer(option)}
-                  className="btn-glass text-left px-6 py-4 text-gray-700 hover:bg-white/80 hover:scale-[1.02] transition-all duration-200 font-medium"
+                  className="text-left px-6 py-4 bg-white/80 hover:bg-white border-2 border-gray-200 hover:border-purple-300 rounded-2xl text-gray-800 hover:text-gray-900 hover:scale-[1.02] transition-all duration-200 font-medium shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center space-x-3">
                     <div

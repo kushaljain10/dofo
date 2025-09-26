@@ -303,15 +303,15 @@ const PersonDetail: React.FC = () => {
 
               {/* Quick Actions */}
               <div className="flex space-x-3">
-                <button className="flex items-center space-x-2 px-4 py-2 bg-green-100 hover:bg-green-200 rounded-full text-green-700 transition-colors">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-green-500 hover:bg-green-600 rounded-full text-white transition-colors">
                   <PhoneIcon className="w-4 h-4" />
                   <span className="text-sm font-semibold">Call</span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-full text-blue-700 transition-colors">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition-colors">
                   <EnvelopeIcon className="w-4 h-4" />
                   <span className="text-sm font-semibold">Message</span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded-full text-purple-700 transition-colors">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 rounded-full text-white transition-colors">
                   <PlusIcon className="w-4 h-4" />
                   <span className="text-sm font-semibold">Add Note</span>
                 </button>
@@ -337,7 +337,7 @@ const PersonDetail: React.FC = () => {
                 className={`flex-1 py-3 px-4 rounded-2xl text-sm font-semibold transition-all duration-200 ${
                   activeTab === tab.id
                     ? "bg-purple-600 text-white shadow-md"
-                    : "hover:bg-gray-50 text-gray-600"
+                    : "hover:bg-gray-100 text-gray-700 hover:text-gray-900"
                 }`}
               >
                 {tab.label}
@@ -430,7 +430,7 @@ const PersonDetail: React.FC = () => {
                     <p className="text-sm text-gray-600 mb-3">
                       {suggestion.description}
                     </p>
-                    <button className="btn-glass hover:bg-purple-50 text-purple-600 text-sm">
+                    <button className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold rounded-full transition-colors">
                       Take Action
                     </button>
                   </div>
@@ -501,7 +501,7 @@ const PersonDetail: React.FC = () => {
                             {new Date(promise.dueDate).toLocaleDateString()}
                           </p>
                         </div>
-                        <button className="btn-glass hover:bg-green-50 text-green-600 text-sm">
+                        <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-full transition-colors">
                           Mark Complete
                         </button>
                       </div>

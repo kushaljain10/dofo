@@ -156,7 +156,7 @@ const People: React.FC = () => {
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
                     filter === filterType
                       ? "bg-purple-600 text-white shadow-md"
-                      : "btn-glass hover:bg-purple-50"
+                      : "btn-glass hover:bg-purple-100 hover:text-purple-800"
                   }`}
                 >
                   {getFilterIcon(filterType)}

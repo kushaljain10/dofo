@@ -199,27 +199,34 @@ html {
 
 /* Minimal Buttons */
 .btn-minimal {
-  @apply font-medium px-8 py-4 rounded-full transition-all duration-300;
-  background: var(--gradient-card);
-  box-shadow: var(--shadow-minimal);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.btn-minimal:hover {
-  transform: translateY(-2px);
+  @apply font-semibold px-8 py-4 rounded-full transition-all duration-300 text-gray-700;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   box-shadow: var(--shadow-soft);
 }
 
+.btn-minimal:hover {
+  @apply text-gray-900;
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
 .btn-glass {
-  @apply font-medium px-6 py-3 rounded-full transition-all duration-300;
-  background: var(--gradient-glass);
+  @apply font-semibold px-6 py-3 rounded-full transition-all duration-300 text-gray-800;
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-minimal);
 }
 
 .btn-glass:hover {
-  background: rgba(255, 255, 255, 0.4);
+  @apply text-gray-900;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
 }
 
 /* Glass Navigation */
